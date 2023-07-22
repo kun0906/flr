@@ -1,0 +1,38 @@
+# Author: Kun
+# Email: kun.bj@outlook.com
+
+### System setting
+# Conda 4.10.3 # conda -V
+# conda create --name py3104 python==3.10.4
+# Python 3.10.4 # Python3 -V
+# Pip3 21.1.2 # Pip3 -V
+
+### Installation
+# pip3 install -r requirements.txt
+# pip3 install --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirement.txt
+# pip config -v list
+# (https://jhooq.com/pip-install-connection-error/)
+
+### Library requirement
+# numpy==1.22.1
+# matplotlib==3.5.1
+# scikit-learn==1.0.2
+# ruamel.yaml==0.17.21
+# coloredlogs==15.0.1
+# XlsxWriter==3.0.3
+# pandas==1.5.0
+# statsmodels==0.13.5
+# adjustText
+# geom_median
+### Libraries used for converting R to python
+#pyensae==1.3.967
+#antlr4-python3-runtime==4.11.1
+#autopep8==2.0.1
+
+flwr
+scikit-learn
+openml
+
+
+
+
