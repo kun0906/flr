@@ -73,7 +73,7 @@ def load_mnist() -> Dataset:
 def load_credit_risk(random_state=42) -> Dataset:
     """Loads the Credit Risk dataset from:
     """
-    df = pd.read_csv('../dataset/credit_risk_dataset-num.csv')
+    df = pd.read_csv('../dataset/legacy/credit_risk_dataset-num.csv')
     X, y = df.values[:, :-1], df.values[:, -1]
     # y[y=='Y'] = 1
     # y[y=='N'] = 0

@@ -9,7 +9,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 
-from utils import load_credit_risk, evaluate
+from utils import load_data, evaluate
 
 # ignore some warnings, especially for lbgfs optimization
 warnings.filterwarnings('ignore')
@@ -24,7 +24,7 @@ N_REPEATS = args.n_repeats
 
 
 def single_main(random_state=42):
-    (X_train, y_train), (X_test, y_test) = load_credit_risk(random_state=random_state)
+    (X_train, y_train), (X_test, y_test) = load_data(random_state=random_state)
     is_normalization = True
     if is_normalization:
         std = StandardScaler()
