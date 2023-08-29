@@ -1,4 +1,15 @@
 
+v0.0.3: Implement multi-classification for main_flr 
+
+1. Implement multi-classification for main_flr
+2. Add gen_data.sh to generate input data for each case
+3. Change 'label' to the last column
+4. Add 'f1' in the evaluation metrics
+5. Add multiple adversaries and different attacker percentages
+6. Add assumptions 
+
+
+
 v0.0.2: Fix four datasets 
 
 1. Investigate different datasets and fix the four datasets

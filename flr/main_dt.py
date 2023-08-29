@@ -17,14 +17,16 @@ warnings.filterwarnings('ignore')
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--n_repeats", type=int, default=2)  # number of repeats of the experiments
+parser.add_argument("--data_name", type=str, default='credit_risk')
+parser.add_argument("--n_repeats", type=int, default=10)  # number of repeats of the experiments
 args = parser.parse_args()
 print(args)
+DATA_NAME=args.data_name
 N_REPEATS = args.n_repeats
+OUT_DIR = 'out_baseline'
 
-
-def single_main(random_state=42):
-    (X_train, y_train), (X_test, y_test) = load_data(random_state=random_state)
+def single_main(data_name, random_state=42):
+    (X_train, y_train), (X_test, y_test) = load_data(data_name, random_state=random_state)
     is_normalization = True
     if is_normalization:
         std = StandardScaler()
@@ -32,7 +34,7 @@ def single_main(random_state=42):
         X_train = std.transform(X_train)
         X_test = std.transform(X_test)
 
-    model = DecisionTreeClassifier(random_state=random_state)
+    model = DecisionTreeClassifier(random_state=random_state, class_weight='balanced')
     model.fit(X_train, y_train)
 
     scores = evaluate(model, X_test, y_test)
@@ -44,13 +46,14 @@ def single_main(random_state=42):
 
 def main():
     history = {}
+    # data_name = 'credit_risk'
     for i in range(N_REPEATS):
         random_state = i * 100
-        his = single_main(random_state=random_state)
+        his = single_main(DATA_NAME, random_state=random_state)
         # print(i, his)
         history[i] = his
 
-    out_f = f'out/DT-R_{N_REPEATS}.dat'
+    out_f = f'{OUT_DIR}/{DATA_NAME}-DT-R_{N_REPEATS}.dat'
     os.makedirs(os.path.dirname(out_f), exist_ok=True)
     with open(out_f, 'wb') as f:
         pickle.dump(history, f)
@@ -59,7 +62,7 @@ def main():
     with open(out_f, 'rb') as f:
         history = pickle.load(f)
 
-    for metric in ['loss', 'accuracy']:
+    for metric in ['accuracy', 'f1', 'auc', 'loss']:
         scores = []
         parmas = []
         for i_repeat, his in history.items():

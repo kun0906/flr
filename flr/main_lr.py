@@ -17,23 +17,25 @@ from utils import load_data, evaluate
 warnings.filterwarnings('ignore')
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--data_name", type=str, default='credit_score')
 parser.add_argument("--n_repeats", type=int, default=2)  # number of repeats of the experiments
 args = parser.parse_args()
 print(args)
+DATA_NAME = args.data_name
 N_REPEATS = args.n_repeats
 # N_REPEATS = 2   # number of repeats of the experiments
-MAX_ITERS = 5  # maximum iterations of each experiments
+MAX_ITERS = 100  # maximum iterations of each experiments
+OUT_DIR = 'out_baseline'
+
+# def set_model_params(model, params):
+#     model = copy.deepcopy(model)
+#     model.coef_ = params['coef_']
+#     model.intercept_ = params['intercept_']
+#     return model
 
 
-def set_model_params(model, params):
-    model = copy.deepcopy(model)
-    model.coef_ = params['coef_']
-    model.intercept_ = params['intercept_']
-    return model
-
-
-def single_main(random_state=42):
-    (X_train, y_train), (X_test, y_test) = load_data(random_state=random_state)
+def single_main(data_name, random_state=42):
+    (X_train, y_train), (X_test, y_test) = load_data(data_name, random_state=random_state)
     is_normalization = True
     if is_normalization:
         std = StandardScaler()
@@ -41,8 +43,12 @@ def single_main(random_state=42):
         X_train = std.transform(X_train)
         X_test = std.transform(X_test)
 
+    multi_class = 'ovr' if len(set(y_train)) > 2 else 'auto'
     model = LogisticRegression(max_iter=MAX_ITERS,
                                warm_start=False,
+                               multi_class = multi_class,
+                               fit_intercept=False,
+                               class_weight='balanced',
                                random_state=random_state)
     model.fit(X_train, y_train)
 
@@ -55,13 +61,14 @@ def single_main(random_state=42):
 
 def main():
     history = {}
+    # data_name = 'credit_risk'   #, 'bank_marketing', 'credit_score', 'credit_risk'
     for i in range(N_REPEATS):
         random_state = i * 100
-        his = single_main(random_state=random_state)
+        his = single_main(DATA_NAME, random_state=random_state)
         # print(i, his)
         history[i] = his
 
-    out_f = f'out/LR-R_{N_REPEATS}-M_{MAX_ITERS}.dat'
+    out_f = f'{OUT_DIR}/{DATA_NAME}-LR-R_{N_REPEATS}-M_{MAX_ITERS}.dat'
     os.makedirs(os.path.dirname(out_f), exist_ok=True)
     with open(out_f, 'wb') as f:
         pickle.dump(history, f)
@@ -70,7 +77,7 @@ def main():
     with open(out_f, 'rb') as f:
         history = pickle.load(f)
 
-    for metric in ['loss', 'accuracy']:
+    for metric in ['accuracy', 'f1', 'auc', 'loss']:
         scores = []
         parmas = []
         for i_repeat, his in history.items():

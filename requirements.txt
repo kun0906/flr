@@ -32,6 +32,10 @@
 flwr
 scikit-learn
 openml
+tqdm
+Jinja2
+seaborn
+
 
 
 
