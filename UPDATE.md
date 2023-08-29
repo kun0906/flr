@@ -1,4 +1,12 @@
 
+v0.0.4: Run all datasets with selected features by VIF
+
+1. Run all datasets with selected features by VIF
+2. Add selected features in load_data()
+3. Update sbatch_*.py 
+
+
+
 v0.0.3: Implement multi-classification for main_flr 
 
 1. Implement multi-classification for main_flr

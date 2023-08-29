@@ -31,16 +31,24 @@ def sample(X, y, each_size=100000, random_state=42):
 
     return subset_X, subset_y
 
-def load_data(data_name='bank_marketing', random_state=42):
+def load_data(data_name='bank_marketing', random_state=42, is_selection=True):
     """Loads data from:
     """
     dataname2path = {'bank_marketing':'bank_marketing/bank/bank-full-num.csv',
-                     'loan_prediction': 'loan_prediction/Training Data-num.csv',
+                     'loan_prediction': 'loan_prediction/Training_Data-num.csv',
                      'credit_score': 'credit_score/train-num.csv',
                       'credit_risk': 'credit_risk/loan-num.csv',
                      }
     df = pd.read_csv(f'dataset/{dataname2path[data_name]}')
     X, y = df.values[:, :-1], df.values[:, -1]
+    if is_selection:
+        # selected by VIF
+        selected_features = {'bank_marketing': [0, 1, 2, 3, 4, 5, 6],
+                             'loan_prediction': [0, 1, 2, 3, 4],
+                             'credit_score': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+                              'credit_risk': [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+                             }
+        X = X[:, selected_features[data_name]]
     y = y.astype(int)   # change target to integer
     # X, y = sample(X, y, each_size=10000, random_state=random_state)
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y,
@@ -53,7 +61,7 @@ def get_column_names(data_name='bank_marketing', random_state=42):
     """Loads data from:
     """
     dataname2path = {'bank_marketing':'bank_marketing/bank/bank-full-num.csv',
-                     'loan_prediction': 'loan_prediction/Training Data-num.csv',
+                     'loan_prediction': 'loan_prediction/Training_Data-num.csv',
                      'credit_score': 'credit_score/train-num.csv',
                       'credit_risk': 'credit_risk/loan-num.csv',
                      }

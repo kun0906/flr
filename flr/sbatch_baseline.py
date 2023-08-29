@@ -19,7 +19,7 @@ def generate_no_adversary():
     n_clients = 10
     n_i = -1
     for part_method in ['iid', 'noniid']:
-        for data_name in ["credit_risk", "credit_score"]:
+        for data_name in ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]:
             for agg_method in ['mean', 'median', 'trim_mean']:
                 name = f"{data_name}-{n_clients}-{n_i}-{p}-{agg_method}-{part_method}"
                 cnt += 1
@@ -71,7 +71,7 @@ def generate_baseline():
         os.makedirs(out_dir)
 
     cnt = 0
-    for data_name in ["credit_risk", "credit_score"]:
+    for data_name in ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]:
         cnt+=1
         name = f'{data_name}-{N_REPEATS}-baseline'
         s = fr"""#!/bin/bash
@@ -115,7 +115,7 @@ echo 'done'
 
 if __name__ == '__main__':
     cnt = 0
-    # cnt += generate_no_adversary()
+    cnt += generate_no_adversary()
     cnt += generate_baseline()
 
     print(f'total number of jobs: {cnt}')

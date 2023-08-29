@@ -21,7 +21,7 @@ warnings.filterwarnings('ignore')
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--data_name", type=str, default='credit_score')    # credit_risk
+parser.add_argument("--data_name", type=str, default='credit_risk')    # credit_risk
 parser.add_argument("--n_repeats", type=int, default=2)  # number of repeats of the experiments
 parser.add_argument("--agg_method", type=str, default='trim_mean')  # aggregation method for federated learning
 parser.add_argument("--percent_adversary", type=float, default=0.2)  # percentage of adversary machines
