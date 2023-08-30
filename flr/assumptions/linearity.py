@@ -1,6 +1,6 @@
 """Test linearity
 
-    Hosmer-Lemeshow Test:
+    Hosmer-Lemeshow Test: if model fit well, it means there is a linearity between logit(P) and Xs.
     Box-Tidwell Test
     Rainbow Test: This test assesses linearity by fitting the regression model and testing whether a linear model is adequate.
     It examines whether the relationship between the residuals and the fitted values is linear.
@@ -123,10 +123,58 @@ def linearity(df, img_file, title=''):
 #         print("Fail to reject the null hypothesis. The model appears to have linearity.")
 
 
+def hosmer_lemeshow_test(X_train, y_train):
+    """
+    The Hosmer-Lemeshow test is a statistical test used to assess the goodness-of-fit of a logistic regression model.
+
+    :return:
+    """
+    from scipy.stats import chi2
+
+    # Fit a logistic regression model
+    X_train = sm.add_constant(X_train)  # Add a constant term for intercept
+    logit_model = sm.Logit(y_train, X_train)
+    logit_result = logit_model.fit()
+
+    # Calculate predicted probabilities
+    predicted_probs = logit_result.predict(X_train)
+
+    # Create bins for the Hosmer-Lemeshow test
+    num_bins = 10
+    # The observed frequencies represent the actual number of positive outcomes (1s) in each bin of predicted probabilities.
+    observed_freq = np.histogram(predicted_probs, bins=num_bins, weights=y_train)[0]
+    # Calculate expected frequencies based on predicted probabilities
+    density, bin_edges = np.histogram(predicted_probs, bins=num_bins, density=True)
+    expected_freq = density * y_train.sum()
+
+    # Calculate the Chi-squared statistic
+    chi_squared = ((observed_freq - expected_freq) ** 2 / expected_freq).sum()
+
+    # Calculate the degrees of freedom
+    df = num_bins - 2  # Number of bins minus the parameters estimated in the model
+
+    # Calculate the p-value
+    p_value = 1 - chi2.cdf(chi_squared, df)
+
+    print("Chi-squared:", chi_squared)
+    print("Degrees of Freedom:", df)
+    print("p-value:", p_value)
+
+    # Interpret the results. H0: the model fits well.
+    """
+    H0: There is no significant difference between the observed and expected frequencies of outcomes within different groups 
+    or bins created based on the predicted probabilities from the logistic regression model.
+    """
+    alpha = 0.05
+    if p_value < alpha:
+        print("Reject the null hypothesis. The model doesn't fit well.")
+    else:
+        print("Fail to reject the null hypothesis. The model fits well.")
+
 
 if __name__ == '__main__':
     random_state = 42
-    for data_name in ['credit_score']:  # 'credit_score',
+    for data_name in ['bank_marketing']:  # 'credit_score', credit_risk, bank_marketing, loan_prediction
         print(f'{int(random_state / 100)}th repeat, and random_state: {random_state}')
         (X_train, y_train), (X_test, y_test) = load_data(data_name, random_state=random_state)
         columns, label = get_column_names(data_name, random_state)
@@ -148,5 +196,6 @@ if __name__ == '__main__':
         of predictors (independent variables) has multicollinearity, meaning that some of the predictor 
         variables are linearly dependent on each other. 
         """
-        linearity(df, img_file, title=data_name)
+        # linearity(df, img_file, title=data_name)
+        hosmer_lemeshow_test(X_train, df['y'])
 

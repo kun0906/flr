@@ -4,6 +4,8 @@ import subprocess
 
 
 N_REPEATS=10
+# datasets = ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]
+datasets = ["bank_marketing", "loan_prediction"]
 def generate_fixed_n_sh(n_clients=50, n_i=100):
     out_dir = 'sh'
     if os.path.exists(out_dir):
@@ -14,7 +16,7 @@ def generate_fixed_n_sh(n_clients=50, n_i=100):
 
     cnt = 0
     for part_method in ['iid', 'noniid']:
-        for data_name in ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]:
+        for data_name in datasets:
             for p in [0.0, 0.05, 0.1, 0.15, 0.2]:
                 for agg_method in ['mean', 'median', 'trim_mean']:
                     name = f"{data_name}-{n_clients}-{n_i}-{p}-{agg_method}-{part_method}"
@@ -67,7 +69,7 @@ def generate_fixed_p_sh(p=0.1, n_i=100):
 
     cnt = 0
     for part_method in ['iid', 'noniid']:
-        for data_name in ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]:
+        for data_name in datasets:
             for n_clients in [10, 50, 100, 150, 200]:  # each client has 100 points per class
                 for agg_method in ['mean', 'median', 'trim_mean']:
                     name = f"{data_name}-{n_clients}-{n_i}-{p}-{agg_method}-{part_method}"
@@ -120,7 +122,7 @@ def generate_varied_ni_sh(p=0.1, n_clients=50):
 
     cnt = 0
     for part_method in ['iid', 'noniid']:
-        for data_name in ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]:
+        for data_name in datasets:
             for n_i in [25, 50, 100, 150, 200]:
                 for agg_method in ['mean', 'median', 'trim_mean']:
                     name = f"{data_name}-{n_clients}-{n_i}-{p}-{agg_method}-{part_method}"

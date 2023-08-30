@@ -57,7 +57,7 @@ def load_data(data_name='bank_marketing', random_state=42, is_selection=True):
     return (x_train, y_train), (x_test, y_test)
 
 
-def get_column_names(data_name='bank_marketing', random_state=42):
+def get_column_names(data_name='bank_marketing', random_state=42, is_selection=True):
     """Loads data from:
     """
     dataname2path = {'bank_marketing':'bank_marketing/bank/bank-full-num.csv',
@@ -67,6 +67,14 @@ def get_column_names(data_name='bank_marketing', random_state=42):
                      }
     df = pd.read_csv(f'dataset/{dataname2path[data_name]}')
     # X, y = df.values[:, :-1], df.values[:, -1]
+    if is_selection:
+        # selected by VIF
+        selected_features = {'bank_marketing': [0, 1, 2, 3, 4, 5, 6],
+                             'loan_prediction': [0, 1, 2, 3, 4],
+                             'credit_score': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+                              'credit_risk': [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+                             }
+        df = df.iloc[:, selected_features[data_name] + [len(df.columns)-1]]
     features, label = df.columns[:-1].tolist(), df.columns[-1]
     return features, label
 

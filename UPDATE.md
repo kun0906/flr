@@ -1,3 +1,9 @@
+v0.0.5: Modify FLR for binary tasks
+
+1. Modify FLR for binary tasks with n_class = 1 for params
+2. Modify sbatch_*.py
+
+
 
 v0.0.4: Run all datasets with selected features by VIF
 

@@ -4,7 +4,8 @@ import subprocess
 
 N_REPEATS = 10
 
-
+# datasets = ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]
+datasets = ["bank_marketing", "loan_prediction"]
 def generate_no_adversary():
     out_dir = 'out_baseline'
 
@@ -19,7 +20,7 @@ def generate_no_adversary():
     n_clients = 10
     n_i = -1
     for part_method in ['iid', 'noniid']:
-        for data_name in ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]:
+        for data_name in datasets:
             for agg_method in ['mean', 'median', 'trim_mean']:
                 name = f"{data_name}-{n_clients}-{n_i}-{p}-{agg_method}-{part_method}"
                 cnt += 1
@@ -71,7 +72,7 @@ def generate_baseline():
         os.makedirs(out_dir)
 
     cnt = 0
-    for data_name in ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]:
+    for data_name in datasets:
         cnt+=1
         name = f'{data_name}-{N_REPEATS}-baseline'
         s = fr"""#!/bin/bash

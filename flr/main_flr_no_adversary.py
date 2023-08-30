@@ -220,7 +220,8 @@ def single_main(data_name, random_state=42):
                                                       random_state=random_state),
                           'data': data, 'scores': None}
                 clients[i_client] = client
-
+            if n_classes == 2:
+                n_classes = 1
             params = {'coef_': np.zeros((n_classes, D)), 'intercept_': np.zeros((n_classes,))}
         else:
             # Clients training
@@ -246,6 +247,8 @@ def single_main(data_name, random_state=42):
 
             rng_ = np.random.RandomState(seed=iter)
             for _ in range(N_Attackers):
+                if n_classes == 2:
+                    n_classes = 1
                 # adversary: here we use one, and there could be multi-attackers
                 coef_ = np.zeros((n_classes, D))
                 intercept_ = np.zeros((n_classes, ))

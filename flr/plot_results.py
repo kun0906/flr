@@ -25,13 +25,12 @@ def extact_data(file_path, metric):
     return np.mean(scores), np.std(scores)
 
 
-def baseline(N_REPEATS=10):
+def baseline(out_dir, datasets, N_REPEATS=10):
 
-    out_dir = 'out_baseline-R_10-20230827'
     # PART_METHOD = 'iid'
     for metric in ['accuracy', 'f1', 'auc', 'loss']:
         print('\n', metric)
-        for data_name in ['credit_risk']:  # credit_risk, 'credit_score',
+        for data_name in datasets: #['credit_risk']:  # credit_risk, 'credit_score',
             results = {}
             for alg_name in ['LR', 'DT']:
                 if alg_name == 'LR':
@@ -44,7 +43,7 @@ def baseline(N_REPEATS=10):
                 X, Y, Y_errs = None, _mu, _std
                 results[alg_name] = (X, Y, Y_errs)
 
-def baseline_FLR(PART_METHOD, N_CLIENTS = 10, N_I=-1):
+def baseline_FLR(out_dir, datasets, PART_METHOD, N_CLIENTS = 10, N_I=-1):
     # for file_name in [f'{data_name}-FLR-R_10-M_{M}-C_{N_CLIENTS}-G_mean-A_{p}.dat',
     #                   f'{data_name}-FLR-R_10-M_{M}-C_{N_CLIENTS}-G_median-A_{p}.dat',
     #                   f'{data_name}-FLR-R_10-M_{M}-C_{N_CLIENTS}-G_trim_mean-A_{p}.dat',
@@ -52,13 +51,14 @@ def baseline_FLR(PART_METHOD, N_CLIENTS = 10, N_I=-1):
     #                   # f'{data_name}-DT-R_10.dat',
     #                   ]:
 
-    # out_dir = 'out_10000points_each_class'
-    # out_dir = 'out-R_10-20230822'
-    out_dir = 'out_baseline-R_10-20230827'
+    # # out_dir = 'out_10000points_each_class'
+    # # out_dir = 'out-R_10-20230822'
+    # # out_dir = 'out_baseline-R_10-20230827'
+    # out_dir = 'out-selected_features-20230829'
     # PART_METHOD = 'iid'
     for metric in ['accuracy', 'f1', 'auc', 'loss']:
         print('\n', metric)
-        for data_name in [ 'credit_risk']:   # credit_risk, 'credit_score',
+        for data_name in datasets: #[ 'credit_risk']:   # credit_risk, 'credit_score',
             results = {}
             for agg_method in ['mean', 'median', 'trim_mean']:
                 X = []
@@ -109,7 +109,7 @@ def baseline_FLR(PART_METHOD, N_CLIENTS = 10, N_I=-1):
 
 
 
-def main_fixed_n(N_CLIENTS = 5, N_I=100):
+def main_fixed_n(out_dir, datasets, N_CLIENTS = 5, N_I=100):
     # for file_name in [f'{data_name}-FLR-R_10-M_{M}-C_{N_CLIENTS}-G_mean-A_{p}.dat',
     #                   f'{data_name}-FLR-R_10-M_{M}-C_{N_CLIENTS}-G_median-A_{p}.dat',
     #                   f'{data_name}-FLR-R_10-M_{M}-C_{N_CLIENTS}-G_trim_mean-A_{p}.dat',
@@ -119,11 +119,11 @@ def main_fixed_n(N_CLIENTS = 5, N_I=100):
 
     # out_dir = 'out_10000points_each_class'
     # out_dir = 'out-R_10-20230822'
-    out_dir = 'out-R_10-20230827'
+    # out_dir = 'out-R_10-20230827'
     # PART_METHOD = 'iid'
     for metric in ['accuracy', 'f1', 'auc', 'loss']:
         print('\n', metric)
-        for data_name in ['credit_score']:   # credit_risk
+        for data_name in datasets: #['credit_score']:   # credit_risk
             results = {}
             for agg_method in ['mean', 'median', 'trim_mean']:
                 X = []
@@ -173,15 +173,15 @@ def main_fixed_n(N_CLIENTS = 5, N_I=100):
             plt.show()
 
 
-def main_fixed_p(p = 0.2, N_I=100):
+def main_fixed_p(out_dir, datasets, p = 0.2, N_I=100):
 
     # out_dir = 'out_10000points_each_class'
     # out_dir = 'out-R_10-20230822'
-    out_dir = 'out-R_10-20230827'
+    # out_dir = 'out-R_10-20230827'
     # PART_METHOD='iid'
     for metric in ['accuracy', 'f1', 'auc', 'loss']:
         print('\n', metric)
-        for data_name in ['credit_score']:   # credit_risk
+        for data_name in datasets: #['credit_score']:   # credit_risk
             results = {}
             for agg_method in ['mean', 'median', 'trim_mean']:
                 X = []
@@ -232,15 +232,15 @@ def main_fixed_p(p = 0.2, N_I=100):
 
 
 
-def main_varied_ni(p = 0.2, N_CLIENTS=100):
+def main_varied_ni(out_dir, datasets, p = 0.2, N_CLIENTS=100):
 
     # out_dir = 'out_10000points_each_class'
     # out_dir = 'out-R_10-20230822'
-    out_dir = 'out-R_10-20230827'
+    # out_dir = 'out-R_10-20230827'
     # PART_METHOD='iid'
     for metric in ['accuracy', 'f1', 'auc', 'loss']:
         print('\n', metric)
-        for data_name in ['credit_score']:   # credit_risk
+        for data_name in datasets: #['credit_score']:   # credit_risk
             results = {}
             for agg_method in ['mean', 'median', 'trim_mean']:
                 X = []
@@ -292,18 +292,22 @@ def main_varied_ni(p = 0.2, N_CLIENTS=100):
 
 if __name__ == '__main__':
 
-    baseline()  # LR, DT
+    # out_dir = 'out_baseline-R_10-20230827'
+    out_dir = 'out_baseline_selected_features-20230829'
+    datasets = ['bank_marketing', 'loan_prediction', 'credit_score', 'credit_risk']
+    # baseline(out_dir, datasets)  # LR, DT
     # for PART_METHOD in ['iid', 'noniid']:
-    #     baseline_FLR(PART_METHOD)
+    #     baseline_FLR(out_dir, datasets, PART_METHOD)
 
-    # for PART_METHOD in ['iid', 'noniid']:
-        #
+    out_dir = 'out-selected_features-20230829'
+    for PART_METHOD in ['iid', 'noniid']:
+
         # for N_CLIENTS in [100]:
-        #     main_fixed_n(N_CLIENTS, N_I=100)  # changed p
+        #     main_fixed_n(out_dir, datasets, N_CLIENTS, N_I=100)  # changed p
 
         # for p in [0.1]:
-        #     main_fixed_p(p, N_I=100) # changed n_clients
+        #     main_fixed_p(out_dir, datasets, p, N_I=100) # changed n_clients
 
-        # for p in [0.1]:  # various n_i, fixed p=0.1, n = 100
-        #     main_varied_ni(p, N_CLIENTS=100)
+        for p in [0.1]:  # various n_i, fixed p=0.1, n = 100
+            main_varied_ni(out_dir, datasets, p, N_CLIENTS=100)
 

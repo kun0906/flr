@@ -21,9 +21,9 @@ warnings.filterwarnings('ignore')
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--data_name", type=str, default='credit_risk')    # credit_risk
+parser.add_argument("--data_name", type=str, default='bank_marketing')    # credit_risk
 parser.add_argument("--n_repeats", type=int, default=2)  # number of repeats of the experiments
-parser.add_argument("--agg_method", type=str, default='trim_mean')  # aggregation method for federated learning
+parser.add_argument("--agg_method", type=str, default='median')  # aggregation method for federated learning
 parser.add_argument("--percent_adversary", type=float, default=0.2)  # percentage of adversary machines
 parser.add_argument("--n_clients", type=int, default=50)  # percentage of adversary machines
 parser.add_argument("--part_method", type=str, default='noniid')  # partition method: iid or non-iid
@@ -210,7 +210,8 @@ def single_main(data_name, random_state=42):
                                                       random_state=random_state),
                           'data': data, 'scores': None}
                 clients[i_client] = client
-
+            if n_classes == 2:
+                n_classes = 1
             params = {'coef_': np.zeros((n_classes, D)), 'intercept_': np.zeros((n_classes,))}
         else:
             # Clients training
@@ -237,6 +238,8 @@ def single_main(data_name, random_state=42):
             rng_ = np.random.RandomState(seed=iter)
             for _ in range(N_Attackers):
                 # adversary: here we use one, and there could be multi-attackers
+                if n_classes == 2:
+                    n_classes = 1
                 coef_ = np.zeros((n_classes, D))
                 intercept_ = np.zeros((n_classes, ))
                 idx = rng_.choice(range(D)) # random select one coordinate and modify it to a big value.
