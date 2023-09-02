@@ -7,13 +7,13 @@ import os
 import pickle
 import warnings
 
-from sklearn.model_selection import StratifiedKFold
 from tqdm import tqdm
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
+from data_partition import noniid_partition, iid_partition
 from utils import load_data, evaluate
 
 # ignore some warnings, especially for lbgfs optimization
@@ -21,11 +21,11 @@ warnings.filterwarnings('ignore')
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--data_name", type=str, default='credit_score')    # credit_risk
+parser.add_argument("--data_name", type=str, default='loan_prediction')    # credit_risk
 parser.add_argument("--n_repeats", type=int, default=2)  # number of repeats of the experiments
-parser.add_argument("--agg_method", type=str, default='trim_mean')  # aggregation method for federated learning
+parser.add_argument("--agg_method", type=str, default='mean')  # aggregation method for federated learning
 parser.add_argument("--percent_adversary", type=float, default=0.0)  # percentage of adversary machines
-parser.add_argument("--n_clients", type=int, default=10)  # percentage of adversary machines
+parser.add_argument("--n_clients", type=int, default=3)  # percentage of adversary machines
 parser.add_argument("--part_method", type=str, default='noniid')  # partition method: iid or non-iid
 parser.add_argument("--n_i", type=int, default=-1)  # number of points per class
 args = parser.parse_args()
@@ -47,102 +47,7 @@ print(f"N_CLIENTS:{N_CLIENTS}, N_Attackers:{N_Attackers}, M:{MAX_ITERS}, P:{PART
 #     return list(
 #         zip(np.array_split(X, num_partitions), np.array_split(y, num_partitions))
 #     )
-OUT_DIR = 'out_baseline'
-
-def iid_partition2(X, y, num_partitions, random_state):
-
-    skf=StratifiedKFold(n_splits=num_partitions, random_state=random_state, shuffle=True)
-    parts = []
-    for i, (train_index, test_index) in enumerate(skf.split(X, y)):
-        parts.append((X[test_index], y[test_index]))
-    # return parts
-
-    # rng = np.random.RandomState(seed=random_state)
-    # # Get unique class labels and their counts
-    # unique_classes, class_counts = np.unique(y, return_counts=True)
-    # parts = []
-    # # Iterate through unique classes and create subsets
-    # for index, (cnt, class_label) in enumerate(zip(class_counts, unique_classes)):
-    #     class_indices = np.where(y == class_label)[0]
-    #     rng.shuffle(class_indices)  # Shuffle indices
-    #     X_, y_ = X[class_indices], y[class_indices]
-    #     n_i = min(N_I, len(y_)//num_partitions)    # each client has almost equal number of points per class
-    #     i = 0
-    #     while i < num_partitions:
-    #         st = i * n_i
-    #         ed = (i + 1) * n_i
-    #         if index == 0:
-    #             parts.append((X_[st:ed], y_[st:ed]))
-    #         else:
-    #             tmp_X = np.concatenate([parts[i][0], X_[st:ed]], axis=0)
-    #             tmp_y = np.concatenate([parts[i][1], y_[st:ed]])
-    #             parts[i] = (tmp_X, tmp_y)
-    #         i = i + 1
-    #
-    # # print(f'total rows: {sum([len(v[1]) for v in parts])}')
-    return parts
-
-
-def noniid_partition2(X, y, num_partitions, random_state):
-    """ Non-IID data: each client have all the class data. each client has N_I point from a class and 10% other points
-    from the rest classes.
-    This scripts might include duplicates during to the sampling on th 10% data from other classes
-
-    :param X:
-    :param y:
-    :param n_i: each client should have n_i points for each class
-    :param random_state:
-    :return:
-    """
-
-    rng = np.random.RandomState(seed=random_state)
-    # Get unique class labels and their counts
-    unique_classes, class_counts = np.unique(y, return_counts=True)
-    parts = []
-    # Iterate through unique classes and create subsets
-    left_partitions = num_partitions
-    for index, (cnt, class_label) in enumerate(zip(class_counts, unique_classes)):
-        class_indices = np.where(y == class_label)[0]
-        rng.shuffle(class_indices)  # Shuffle indices
-        X_, y_ = X[class_indices], y[class_indices]
-        n_i = 100  # each client has almost equal number of points per class
-        assert n_i * num_partitions < len(y)
-        i = 0
-        cnt_i = 0
-        while i < num_partitions:
-            st = i * n_i
-            ed = (i + 1) * n_i
-            cnt_i+= n_i
-            if index == 0:
-                parts.append((X_[st:ed], y_[st:ed]))
-            else:
-                tmp_X = np.concatenate([parts[i][0], X_[st:ed]], axis=0)
-                tmp_y = np.concatenate([parts[i][1], y_[st:ed]])
-                parts[i] = (tmp_X, tmp_y)  # be careful of the index here
-            # print(index, i, parts[i][0].shape, n_i)
-            i+=1
-
-        # the majority of data
-        X2_, y2_ = X[class_indices][cnt_i:], y[class_indices][cnt_i:]
-        start_index = index * int(num_partitions // len(unique_classes))
-        n2_i = len(y2_) // int(num_partitions//len(unique_classes))
-        i2 = 0
-        while i2*n2_i < len(y_):
-            st = i2 * n2_i
-            ed = (i2 + 1) * n2_i
-            # sampling 10% data from other classes
-            tmp_X = parts[start_index+i2][0]    # be careful of the index here
-            tmp_y = parts[start_index+i2][1]
-            tmp_X = np.concatenate([tmp_X, X2_[st:ed]], axis=0)
-            tmp_y = np.concatenate([tmp_y, y2_[st:ed]])
-            parts[start_index+i2] = (tmp_X, tmp_y)       # be careful of the index here
-            i2 = i2 + 1
-
-    tmp_n = sum([len(v[1]) for v in parts])
-    print(f'total rows: {tmp_n}')
-    assert tmp_n == len(y)
-
-    return parts
+OUT_DIR = 'out/baseline'
 
 def set_model_params(model, params):
     model = copy.deepcopy(model)
@@ -203,9 +108,11 @@ def single_main(data_name, random_state=42):
             # X_train, y_train = X_train[idx], y_train[idx]
             # parts = partition(X_train, y_train, N_CLIENTS)
             if PART_METHOD != 'iid':
-                parts = noniid_partition2(X_train, y_train, N_CLIENTS, random_state)
+                parts = noniid_partition(X_train, y_train, N_CLIENTS, random_state)
+                # parts = sample_noniid_partition(X_train, y_train, N_CLIENTS, N_I, random_state)
             else:
-                parts = iid_partition2(X_train, y_train, N_CLIENTS, random_state)
+                parts = iid_partition(X_train, y_train, N_CLIENTS, random_state)
+                # parts = sample_iid_partition(X_train, y_train, N_CLIENTS, N_I, random_state)
 
             clients = {}
             for i_client in range(N_CLIENTS):

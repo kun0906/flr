@@ -106,7 +106,11 @@ def evaluate(model, X_test, y_test):
     if check_nan(y_probs, X_test, y_test):
         y_probs = fill_nan(y_probs)  # too large or small input values could lead Nan
         # print(y_probs[88198], sum(y_probs[88198]))    # for debugging
-    loss = log_loss(y_test, y_probs)
+    try:
+        loss = log_loss(y_test, y_probs)
+    except Exception as e:
+        loss = -1
+        print(e)
     accuracy = model.score(X_test, y_test)
     y_preds = model.predict(X_test) # predicted labels
     if len(set(y_test)) == 2:
@@ -116,7 +120,11 @@ def evaluate(model, X_test, y_test):
     else:  # one vs rest
         f1 = f1_score(y_test, y_preds, average='macro')
         multi_class = 'ovr'
-        auc = roc_auc_score(y_test, y_probs, multi_class=multi_class)
+        try:
+            auc = roc_auc_score(y_test, y_probs, multi_class=multi_class)
+        except Exception as e:
+            print(e)
+            auc = -1
     return {'loss': loss, "accuracy": accuracy, 'f1': f1, 'auc': auc}
 
 

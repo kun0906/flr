@@ -20,7 +20,8 @@ def extact_data(file_path, metric):
             scores.append(his['scores'][metric])
             parmas.append(his['params'])
         # print(f'i_repeat:{i_repeat}, {metric}:', scores[-1], parmas[-1])
-    print(f'{file_path}:', metric, np.mean(scores), np.std(scores), scores)
+
+    print(f'{file_path}:', metric, f"{np.mean(scores):.2f} $\pm$ {1.96*np.std(scores):.2f}", np.mean(scores), 1.96*np.std(scores), scores)
 
     return np.mean(scores), np.std(scores)
 
@@ -304,10 +305,10 @@ if __name__ == '__main__':
 
         # for N_CLIENTS in [100]:
         #     main_fixed_n(out_dir, datasets, N_CLIENTS, N_I=100)  # changed p
+        #
+        for p in [0.1]:
+            main_fixed_p(out_dir, datasets, p, N_I=100) # changed n_clients
 
-        # for p in [0.1]:
-        #     main_fixed_p(out_dir, datasets, p, N_I=100) # changed n_clients
-
-        for p in [0.1]:  # various n_i, fixed p=0.1, n = 100
-            main_varied_ni(out_dir, datasets, p, N_CLIENTS=100)
+        # for p in [0.1]:  # various n_i, fixed p=0.1, n = 100
+        #     main_varied_ni(out_dir, datasets, p, N_CLIENTS=100)
 

@@ -4,10 +4,11 @@ import subprocess
 
 
 N_REPEATS=10
-# datasets = ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]
-datasets = ["bank_marketing", "loan_prediction"]
+datasets = ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]
+# datasets = ["credit_risk"]
+out_dir = 'out/various'
 def generate_fixed_n_sh(n_clients=50, n_i=100):
-    out_dir = 'sh'
+
     if os.path.exists(out_dir):
         shutil.rmtree(out_dir)
 
@@ -60,7 +61,7 @@ echo 'done'
 
 
 def generate_fixed_p_sh(p=0.1, n_i=100):
-    out_dir = 'sh'
+    # out_dir = 'sh'
     # if os.path.exists(out_dir):
     #     shutil.rmtree(out_dir)
 
@@ -113,7 +114,7 @@ echo 'done'
 
 
 def generate_varied_ni_sh(p=0.1, n_clients=50):
-    out_dir = 'sh'
+    # out_dir = 'sh'
     # if os.path.exists(out_dir):
     #     shutil.rmtree(out_dir)
     #

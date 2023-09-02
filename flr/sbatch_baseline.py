@@ -4,10 +4,11 @@ import subprocess
 
 N_REPEATS = 10
 
-# datasets = ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]
-datasets = ["bank_marketing", "loan_prediction"]
+datasets = ["credit_risk", "credit_score", "bank_marketing", "loan_prediction"]
+# datasets = ["bank_marketing", "loan_prediction"]
+out_dir = 'out/baseline'
 def generate_no_adversary():
-    out_dir = 'out_baseline'
+    # out_dir = 'out_baseline'
 
     if os.path.exists(out_dir):
         shutil.rmtree(out_dir)
@@ -63,7 +64,7 @@ echo 'done'
 
 
 def generate_baseline():
-    out_dir = 'out_baseline'
+    # out_dir = 'out_baseline'
 
     # if os.path.exists(out_dir):
     #     shutil.rmtree(out_dir)

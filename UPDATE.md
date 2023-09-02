@@ -1,3 +1,13 @@
+v0.0.6: Reimplement data generation for IID and Non-IID.
+
+1. Reimplement data generated for IID and Non-IID for with/without outliers.
+    For IID, each client has the same distribution as the population.
+    For Non-IID, each client has the various distributions for different class 
+2. Add 'data_partition.py' to include all the data generate functions. 
+3. Update the corresponding files.
+
+
+
 v0.0.5: Modify FLR for binary tasks
 
 1. Modify FLR for binary tasks with n_class = 1 for params
