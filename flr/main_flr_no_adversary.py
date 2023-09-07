@@ -21,7 +21,7 @@ warnings.filterwarnings('ignore')
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--data_name", type=str, default='loan_prediction')    # credit_risk
+parser.add_argument("--data_name", type=str, default='credit_risk')    # credit_risk
 parser.add_argument("--n_repeats", type=int, default=2)  # number of repeats of the experiments
 parser.add_argument("--agg_method", type=str, default='mean')  # aggregation method for federated learning
 parser.add_argument("--percent_adversary", type=float, default=0.0)  # percentage of adversary machines
@@ -77,7 +77,7 @@ def aggregate_params(params, method='mean', method_params = {}, fit_intercept=Tr
 
 def single_main(data_name, random_state=42):
     print(f'{int(random_state/100)}th repeat, and random_state: {random_state}')
-    (X_train, y_train), (X_test, y_test) = load_data(data_name, random_state=random_state)
+    (X_train, y_train), (X_test, y_test) = load_data(data_name, random_state=random_state, is_selection=True)
     print(f'X_train: {X_train.shape}, y_train: {collections.Counter(y_train)}')
     print(f'X_test: {X_test.shape}, y_test: {collections.Counter(y_test)}')
     is_normalization = True

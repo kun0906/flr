@@ -152,11 +152,18 @@ def feature_selection_vif(X, vif_threshold=1):
 
 
 def correlation(df, img_file='.png', title=''):
+    print(img_file)
     corr = df.corr()
-
-    plt.figure(figsize=(18, 15))  # width height
-    sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f")
-    plt.title(title)
+    # sns.set(font_scale=1.4)
+    if 'credit_risk' in img_file:
+        plt.figure(figsize=(20, 16))  # width height
+    else:
+        plt.figure(figsize=(18, 15))  # width height
+    res = sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f")
+    # if 'credit_score' in img_file:
+    res.set_xticklabels(res.get_xmajorticklabels(), fontsize=15, rotation=90)
+    res.set_yticklabels(res.get_ymajorticklabels(), fontsize=15, rotation=0)
+    # plt.title(title)
     plt.tight_layout()
     plt.savefig(img_file, dpi=300, pad_inches=0.0)
     plt.show()
@@ -178,10 +185,10 @@ def corr_feat_label(feat, label):
 
 if __name__ == '__main__':
     random_state = 42
-    for data_name in ['bank_marketing']:  # 'credit_score', loan_prediction, credit_score, bank_marketing
+    for data_name in ['credit_risk']:  # 'credit_score', loan_prediction, credit_score, bank_marketing
         print(f'{int(random_state / 100)}th repeat, and random_state: {random_state}')
         (X_train, y_train), (X_test, y_test) = load_data(data_name, random_state=random_state, is_selection=False)
-        columns, label = get_column_names(data_name, random_state)
+        columns, label = get_column_names(data_name, random_state, is_selection=False)
         print(f'X_train: {X_train.shape}, y_train: {collections.Counter(y_train)}')
         print(f'X_test: {X_test.shape}, y_test: {collections.Counter(y_test)}')
         print(columns, label)
@@ -195,7 +202,7 @@ if __name__ == '__main__':
         img_file = f'out/{data_name}-correlation.png'
         df = pd.DataFrame(X_train, columns=columns)
         correlation(df, img_file, title=data_name)
-        corr_feat_label(df['previous'], y_train)
+        # corr_feat_label(df['previous'], y_train)
 
         # Reduce the redundant features from X_train by VIF
         selected_columns = feature_selection_vif(X_train, vif_threshold=10)

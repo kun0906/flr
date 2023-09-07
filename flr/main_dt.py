@@ -23,7 +23,7 @@ args = parser.parse_args()
 print(args)
 DATA_NAME=args.data_name
 N_REPEATS = args.n_repeats
-OUT_DIR = 'out_baseline'
+OUT_DIR = 'out/baseline'
 
 def single_main(data_name, random_state=42):
     (X_train, y_train), (X_test, y_test) = load_data(data_name, random_state=random_state)

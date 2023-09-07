@@ -1,3 +1,9 @@
+v0.0.7: Add plot_params_result.py for feature importance report
+
+1. Add plot_params_result.py for feature importance report.
+2. Add KNN
+3. Add main_lr_shap.py 
+
 v0.0.6: Reimplement data generation for IID and Non-IID.
 
 1. Reimplement data generated for IID and Non-IID for with/without outliers.

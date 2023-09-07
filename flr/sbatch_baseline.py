@@ -95,9 +95,10 @@ python3 -V
 uname -a 
 hostname -s
  
-PYTHONUNBUFFERED=TRUE python main_lr.py --data_name {data_name} --n_repeats {N_REPEATS}  &> {out_dir}/{data_name}-lr.txt &
-PYTHONUNBUFFERED=TRUE python main_dt.py --data_name {data_name} --n_repeats {N_REPEATS}  &> {out_dir}/{data_name}-dt.txt &
-
+# PYTHONUNBUFFERED=TRUE python main_lr.py --data_name {data_name} --n_repeats {N_REPEATS}  &> {out_dir}/{data_name}-lr.txt &
+# PYTHONUNBUFFERED=TRUE python main_dt.py --data_name {data_name} --n_repeats {N_REPEATS}  &> {out_dir}/{data_name}-dt.txt &
+PYTHONUNBUFFERED=TRUE python main_knn.py --data_name {data_name} --n_repeats {N_REPEATS}  &> {out_dir}/{data_name}-knn.txt &
+PYTHONUNBUFFERED=TRUE python main_rf.py --data_name {data_name} --n_repeats {N_REPEATS}  &> {out_dir}/{data_name}-rf.txt &
 # if you use & at the end of your command, your job cannot be seen by 'squeue -u'
 
 wait
@@ -117,7 +118,7 @@ echo 'done'
 
 if __name__ == '__main__':
     cnt = 0
-    cnt += generate_no_adversary()
+    # cnt += generate_no_adversary()
     cnt += generate_baseline()
 
     print(f'total number of jobs: {cnt}')

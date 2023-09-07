@@ -24,11 +24,11 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--data_name", type=str, default='credit_risk')    # credit_risk
 parser.add_argument("--n_repeats", type=int, default=2)  # number of repeats of the experiments
-parser.add_argument("--agg_method", type=str, default='median')  # aggregation method for federated learning
+parser.add_argument("--agg_method", type=str, default='mean')  # aggregation method for federated learning
 parser.add_argument("--percent_adversary", type=float, default=0.0)  # percentage of adversary machines
 parser.add_argument("--n_clients", type=int, default=100)  # percentage of adversary machines
-parser.add_argument("--part_method", type=str, default='iid')  # partition method: iid or non-iid
-parser.add_argument("--n_i", type=int, default=100)  # number of points per class
+parser.add_argument("--part_method", type=str, default='0iid')  # partition method: iid or non-iid
+parser.add_argument("--n_i", type=int, default=25)  # number of points per class
 args = parser.parse_args()
 print(args)
 DATA_NAME=args.data_name

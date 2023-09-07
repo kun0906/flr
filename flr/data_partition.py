@@ -168,7 +168,7 @@ def sample_iid_partition(X, y, num_partitions, N_I, random_state):
             rng.shuffle(class_indices)  # Shuffle indices
             # weight for each class
             if index == len(unique_classes) - 1:
-                n_i = N_I - len(tmp[1])
+                n_i = max(N_I - len(tmp[1]), 1)
             else:
                 n_i = max(int(np.floor(len(class_indices) / len(Y_i) * N_I)), 1)
             class_indices = class_indices[:n_i]
@@ -180,6 +180,7 @@ def sample_iid_partition(X, y, num_partitions, N_I, random_state):
                 tmp_y = np.concatenate([tmp[1], Y_i[class_indices]])
                 tmp = (tmp_X, tmp_y)
                 # print(Y_i[class_indices])
+        # print(collections.Counter(tmp[1]))
         parts.append(tmp)
     N2, y2_dict = get_parts_info(parts)
     print(f'total rows: {N2}, {y2_dict.items()}')
@@ -264,7 +265,7 @@ def sample_noniid_partition(X, y, num_partitions, N_I, random_state):
         X_, y_ = X[used_indexes], y[used_indexes]
         mask = np.full(len(y), True)
         mask[used_indexes] = False
-        X, y = X[mask], y[mask]
+        X, y = X[mask], y[mask]     # updated X, y
         if index == len(unique_classes) - 1:
             n_parts = left_parts
         else:
@@ -273,14 +274,16 @@ def sample_noniid_partition(X, y, num_partitions, N_I, random_state):
             left_parts = left_parts - n_parts
 
         assert len(class_indices) >= n_parts
-        n_i = N_I - int(np.floor(N_I * 0.1))  # each client has N_I data for one class
+        n_i = max(N_I - int(np.floor(N_I * 0.1)),1)  # each client has N_I data for one class
         for j in range(n_parts):
             X2, y2 = X_[j * n_i:(j + 1) * n_i, :], y_[j * n_i:(j + 1) * n_i]
             tmp = parts[start_index + j]
             tmp_X = np.concatenate([tmp[0], X2], axis=0)
             tmp_y = np.concatenate([tmp[1], y2])
             parts[start_index + j] = (tmp_X, tmp_y)
+            print(collections.Counter(tmp_y))
         if n_parts > 0: start_index += 1
+
     N2, y2_dict = get_parts_info(parts)
     print(f'total rows: {N}, {y_dict.items()}')
     print(f'total rows: {N2}, {y2_dict.items()}')

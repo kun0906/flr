@@ -8,7 +8,7 @@ import pickle
 import warnings
 
 import numpy as np
-from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 
 from utils import load_data, evaluate
@@ -17,7 +17,7 @@ from utils import load_data, evaluate
 warnings.filterwarnings('ignore')
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--data_name", type=str, default='credit_score')
+parser.add_argument("--data_name", type=str, default='bank_marketing')
 parser.add_argument("--n_repeats", type=int, default=2)  # number of repeats of the experiments
 args = parser.parse_args()
 print(args)
@@ -43,17 +43,20 @@ def single_main(data_name, random_state=42):
         X_train = std.transform(X_train)
         X_test = std.transform(X_test)
 
-    multi_class = 'ovr' if len(set(y_train)) > 2 else 'auto'
-    model = LogisticRegression(max_iter=MAX_ITERS,
-                               warm_start=False,
-                               multi_class = multi_class,
-                               fit_intercept=False,
-                               class_weight='balanced',
-                               random_state=random_state)
+    # multi_class = 'ovr' if len(set(y_train)) > 2 else 'auto'
+    model = KNeighborsClassifier(
+        n_neighbors=5,
+        weights="uniform",
+        algorithm="auto",
+        leaf_size=30,
+        p=2,
+        metric="minkowski",
+        metric_params=None,
+        n_jobs=None)
     model.fit(X_train, y_train)
 
     scores = evaluate(model, X_test, y_test)
-    params = {'coef_': model.coef_, 'intercept_': model.intercept_}
+    params = 0
     history = {'scores': scores, 'params': params}
 
     return history
@@ -68,7 +71,7 @@ def main():
         # print(i, his)
         history[i] = his
 
-    out_f = f'{OUT_DIR}/{DATA_NAME}-LR-R_{N_REPEATS}-M_{MAX_ITERS}.dat'
+    out_f = f'{OUT_DIR}/{DATA_NAME}-KNN-R_{N_REPEATS}-M_{MAX_ITERS}.dat'
     os.makedirs(os.path.dirname(out_f), exist_ok=True)
     with open(out_f, 'wb') as f:
         pickle.dump(history, f)
@@ -84,7 +87,7 @@ def main():
             scores.append(his['scores'][metric])
             parmas.append(his['params'])
             print(f'i_repeat:{i_repeat}, {metric}:', scores[-1], parmas[-1])
-        print('LR:', metric, np.mean(scores), np.std(scores), scores)
+        print('KNN:', metric, np.mean(scores), np.std(scores), scores)
 
 
 if __name__ == '__main__':
